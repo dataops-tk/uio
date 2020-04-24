@@ -47,7 +47,6 @@ jobs:
       max-parallel: 4
       matrix:
         python-version:
-          - 3.7
           - 3.8
     needs:
       - python_build_and_test
