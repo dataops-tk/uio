@@ -9,7 +9,7 @@ import tempfile as _tempfile
 import fire as _fire
 
 import logless as _logs
-from slalom.dataops import jobs as _jobs
+import runnow as _jobs
 
 _LOGGER = _logs.get_logger("uio")
 
@@ -145,7 +145,7 @@ def parse_aws_creds():
             _os.environ.get("AWS_SESSION_TOKEN", None),
         )
     if "AWS_CONTAINER_CREDENTIALS_RELATIVE_URI" in _os.environ:
-        return_code, output = _jobs.run_command(
+        return_code, output = _jobs.run(
             "curl --silent 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI",
             raise_error=False,
             echo=False,
@@ -492,10 +492,10 @@ def download_s3_folder(s3_prefix, local_folder):
 
 
 def download_git_repo(repo_url, git_ref, target_dir):
-    _jobs.run_command(f"git clone https://{repo_url} .", cwd=target_dir)
+    _jobs.run(f"git clone https://{repo_url} .", cwd=target_dir)
     if git_ref != "master":
-        _jobs.run_command(f"git fetch", cwd=target_dir)
-        _jobs.run_command(f"git checkout {git_ref}", cwd=target_dir)
+        _jobs.run(f"git fetch", cwd=target_dir)
+        _jobs.run(f"git checkout {git_ref}", cwd=target_dir)
 
 
 def download_git_folder(git_path, local_folder):
