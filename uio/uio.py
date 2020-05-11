@@ -235,7 +235,7 @@ def _pick_cloud_function(filepath, s3_fn, adl_fn, git_fn=None, else_fn=None):
         fn = else_fn
     if not fn:
         raise NotImplementedError(
-            "Could not pick cloud function given filepath '{filepath}'"
+            f"Could not pick cloud function given filepath '{filepath}' "
             "and provided function map {"
             f"'s3': '{s3_fn}', 'adl': '{adl_fn}', 'git': '{git_fn}', 'else': '{else_fn}'"
             "}"
@@ -363,8 +363,17 @@ def delete_local_file(filepath, ignore_missing=True):
 
 @_logs.logged(desc_detail="{local_path}->{remote_path}")
 def upload_file(local_path, remote_path):
+    """
+    Upload a local file to a remote path.
+
+    If the remote_path is also local, a copy operation will be performed instead.
+    If you are not sure if the source file is local, use `copy_file` instead.
+    """
     fn = _pick_cloud_function(
-        remote_path, s3_fn=upload_s3_file, adl_fn=upload_adl_file, else_fn=None
+        remote_path,
+        s3_fn=upload_s3_file,
+        adl_fn=upload_adl_file,
+        else_fn=_shutil.copyfile,
     )
     return fn(local_path, remote_path)
 
