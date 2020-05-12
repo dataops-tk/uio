@@ -3,6 +3,7 @@ import functools as _functools
 import json as _json
 import os as _os
 from pathlib import Path as _Path
+import platform
 import shutil as _shutil
 import tempfile as _tempfile
 
