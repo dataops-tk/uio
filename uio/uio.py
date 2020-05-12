@@ -370,9 +370,9 @@ def upload_file(local_path, remote_path):
     If you are not sure if the source file is local, use `copy_file` instead.
     """
     if not is_local(local_path):
-        _logging.warning(f"Attempting to upload a non-local file '${local_path}'.")
+        _LOGGER.warning(f"Attempting to upload a non-local file '${local_path}'.")
     elif not file_exists(local_path):
-        _logging.warning(f"Attempting to upload a non-existent file '${local_path}'.")
+        _LOGGER.warning(f"Attempting to upload a non-existent file '${local_path}'.")
 
     fn = _pick_cloud_function(
         remote_path,
