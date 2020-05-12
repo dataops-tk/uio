@@ -59,6 +59,18 @@ if _adls:
 _SAFE_PATHS = []
 
 
+def is_windows() -> bool:
+    return platform.system() == "Windows"
+
+
+def is_mac() -> bool:
+    return platform.system() == "Darwin"
+
+
+def is_linux() -> bool:
+    return platform.system() == "Linux"
+
+
 # Enforcement of write safety
 def set_safe_paths(list_of_paths):
     """ Set list of safe writeable paths """
