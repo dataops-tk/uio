@@ -82,6 +82,10 @@ jobs:
       - name: Test install (pip install uio)
         run: |
           pip install uio
+      - name: Test CLI shortcuts
+        run: |
+          set -v
+          uio -- --help
       - name: Test uninstall (pip uninstall uio)
         run: |
           pip uninstall -y uio
