@@ -47,11 +47,11 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "logless"
+        "logless", "runnow"
     ],
     extras_require={
-        "Azure": ["azure"],
-        "S3": ["boto3", "s3fs"],
+        "AWS": ["boto3", "s3fs"],
+        "Azure": ["azure-storage-blob", "azure-storage-file-datalake"],
     },
     classifiers=[
         "Development Status :: 4 - Beta",  # "4 - Beta" or "5 - Production/Stable"
