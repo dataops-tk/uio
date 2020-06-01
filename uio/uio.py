@@ -234,7 +234,9 @@ def is_local(filepath):
 def make_local(folder_path):
     if is_local(folder_path):
         return folder_path
-    return download_folder(folder_path, local_folder=get_scratch_dir(), as_subfolder=True)
+    return download_folder(
+        folder_path, local_folder=get_scratch_dir(), as_subfolder=True
+    )
 
 
 def _pick_cloud_function(filepath, s3_fn, adl_fn, git_fn=None, else_fn=None):
@@ -341,7 +343,10 @@ def copy_file(source_file, target_file):
 # File deletion
 def delete_file(filepath, ignore_missing=True):
     fn = _pick_cloud_function(
-        filepath, s3_fn=delete_s3_file, adl_fn=delete_adl_file, else_fn=delete_local_file
+        filepath,
+        s3_fn=delete_s3_file,
+        adl_fn=delete_adl_file,
+        else_fn=delete_local_file,
     )
     return fn(filepath, ignore_missing=ignore_missing)
 
@@ -428,7 +433,9 @@ def create_text_file(filepath, contents):
         filepath,
         s3_fn=create_s3_text_file,
         adl_fn=None,
-        else_fn=lambda filepath, contents: _Path(filepath).write_text(contents),
+        else_fn=lambda filepath, contents: _Path(filepath).write_text(
+            contents, encoding="utf-8"
+        ),
     )
     return fn(filepath, contents)
 
@@ -554,7 +561,9 @@ def s3write_using(func, *args, **kwargs):
     func(*newargs, **newkwargs)
     if temp_path_map:
         for local_path, s3_path in temp_path_map.items():
-            if _SAFE_PATHS and not any([s3_path in safepath for safepath in _SAFE_PATHS]):
+            if _SAFE_PATHS and not any(
+                [s3_path in safepath for safepath in _SAFE_PATHS]
+            ):
                 raise RuntimeError(
                     f"Path '{s3_path}' cannot be written to because it is not in the "
                     f"designated safe output paths: '{', '.join(_SAFE_PATHS)}'"
