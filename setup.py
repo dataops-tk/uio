@@ -46,9 +46,7 @@ setup(
         ]
     },
     include_package_data=True,
-    install_requires=[
-        "logless", "runnow"
-    ],
+    install_requires=["logless", "runnow", "fire"],
     extras_require={
         "AWS": ["boto3", "s3fs"],
         "Azure": ["azure-storage-blob", "azure-storage-file-datalake"],

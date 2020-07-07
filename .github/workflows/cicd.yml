@@ -57,18 +57,11 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Generate build number (BUILD_NUMBER)
-        id: buildnumber
-        uses: einaregilsson/build-number@v2
-        with:
-          token: ${{secrets.github_token}}
       - name: Push to PyPi (https://pypi.org/project/uio/)
         env:
-          # VERSION: ${{ github.ref }}
           BRANCH_NAME: ${{ github.ref }}
           PYPI_USER: ${{ secrets.PYPI_USER }}
           PYPI_PASS: ${{ secrets.PYPI_SECRET }}
-          BUILD_NUMBER: ${{ steps.buildnumber.outputs.build_number }}
         run: |
           echo -e "Installing twine...\n\n"
           pip install twine
@@ -81,7 +74,7 @@ jobs:
           sleep 60
       - name: Test install (pip install uio)
         run: |
-          pip install uio
+          pip install --no-cache-dir uio
       - name: Test CLI shortcuts
         run: |
           set -v
