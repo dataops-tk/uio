@@ -440,6 +440,28 @@ def create_text_file(filepath, contents):
     return fn(filepath, contents)
 
 
+def read_text_file(filepath, encoding="utf-8"):
+    if is_local(filepath):
+        return get_local_text_file_contents(filepath, encoding)
+    tmpfile = f"{get_temp_dir()}/tmp-{_os.path.basename(filepath)}"
+    download_file(filepath, tmpfile)
+    result = get_local_text_file_contents(tmpfile, encoding)
+    delete_local_file(tmpfile)
+    return result
+
+
+# Legacy function alias (deprecated):
+get_text_file_contents = read_text_file
+
+
+def get_local_text_file_contents(filepath, encoding="utf-8"):
+    if not filepath:
+        raise ValueError(f"Invalid filepath argument: {filepath}")
+    filepath = cleanup_filepath(filepath)
+    with open(filepath, "r", encoding=encoding) as f:
+        return f.read()
+
+
 # Folder operations
 def create_s3_folder(s3_folderpath):
     s3 = _boto3.client("s3")
@@ -475,14 +497,6 @@ def download_s3_file(s3_path, local_path):
     bucket_name, object_key = parse_s3_path(s3_path)
     s3_bucket = boto.Bucket(bucket_name)
     s3_bucket.download_file(object_key, local_path)
-
-
-def get_text_file_contents(filepath, encoding="utf-8"):
-    if not filepath:
-        raise ValueError(f"Invalid filepath argument: {filepath}")
-    filepath = cleanup_filepath(filepath)
-    with open(filepath, "r", encoding=encoding) as f:
-        return f.read()
 
 
 # Folder downloads:
