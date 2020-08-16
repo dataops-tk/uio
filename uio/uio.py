@@ -285,7 +285,7 @@ def list_files(file_prefix):
         adl_fn=list_adl_files,
         else_fn=lambda prefix: [_os.path.join(prefix, x) for x in _os.listdir(prefix)],
     )
-    return fn(file_prefix)
+    return sorted(fn(file_prefix))
 
 
 # Function Aliases:
