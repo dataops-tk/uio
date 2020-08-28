@@ -279,13 +279,23 @@ def adl_file_exists(filepath):
 
 
 def list_files(file_prefix):
+    """Return all files in a specified path, recursively."""
     fn = _pick_cloud_function(
         file_prefix,
         s3_fn=list_s3_files,
         adl_fn=list_adl_files,
-        else_fn=lambda prefix: [_os.path.join(prefix, x) for x in _os.listdir(prefix)],
+        else_fn=list_local_files,
     )
     return sorted(fn(file_prefix))
+
+
+def list_local_files(folder_path):
+    """Return all files in a specified folder path, recursively."""
+    return [
+        _os.path.join(dp, f)
+        for dp, dn, fn in _os.walk(_os.path.expanduser(folder_path))
+        for f in fn
+    ]
 
 
 # Function Aliases:
