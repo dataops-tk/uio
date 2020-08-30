@@ -289,13 +289,15 @@ def list_files(file_prefix):
     return sorted(fn(file_prefix))
 
 
-def list_local_files(folder_path):
+def list_local_files(folder_path, recursive: bool = True):
     """Return all files in a specified folder path, recursively."""
-    return [
-        _os.path.join(dp, f)
-        for dp, dn, fn in _os.walk(_os.path.expanduser(folder_path))
-        for f in fn
-    ]
+    if recursive:
+        return [
+            _os.path.join(dp, f)
+            for dp, dn, fn in _os.walk(_os.path.expanduser(folder_path))
+            for f in fn
+        ]
+    return [_os.path.join(folder_path, x) for x in _os.listdir(folder_path)]
 
 
 # Function Aliases:
