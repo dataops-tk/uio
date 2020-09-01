@@ -126,11 +126,12 @@ def parse_s3_path(s3_path):
 
 def parse_aws_creds_from_file(creds_file, profile_name=None):
     """Return a 3-part tuple: (AccessKeyId, SecretAccessKey, Token=None)"""
-    config = _configparser.ConfigParser().read(creds_file)
+    config = _configparser.ConfigParser()
+    config.read(creds_file)
     profile_name = profile_name or _os.environ.get("AWS_PROFILE", "default")
-    if profile_name not in creds_file.sections:
+    if profile_name not in config.sections():
         raise ValueError(
-            "Could not file profile '{profile_name}' in creds file '{creds_file}'"
+            f"Could not file profile '{profile_name}' in creds file '{creds_file}'"
         )
     profile = config[profile_name]
     return (
@@ -292,11 +293,13 @@ def list_files(file_prefix):
 def list_local_files(folder_path, recursive: bool = True):
     """Return all files in a specified folder path, recursively."""
     if recursive:
-        return sorted([
-            _os.path.join(dp, f)
-            for dp, dn, fn in _os.walk(_os.path.expanduser(folder_path))
-            for f in fn
-        ])
+        return sorted(
+            [
+                _os.path.join(dp, f)
+                for dp, dn, fn in _os.walk(_os.path.expanduser(folder_path))
+                for f in fn
+            ]
+        )
     return sorted([_os.path.join(folder_path, x) for x in _os.listdir(folder_path)])
 
 
