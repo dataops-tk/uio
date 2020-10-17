@@ -259,6 +259,17 @@ def _pick_cloud_function(filepath, s3_fn, adl_fn, git_fn=None, else_fn=None):
     return fn
 
 
+def _get_target_file_path(target_path, source_file):
+    """If target path ends in slash or backslash, append filename from source."""
+    if not target_path.replace("\\", "/").endswith("/"):
+        return target_path
+    if target_path.endswith("//"):
+        # Remove extra trailing slashes
+        target_path = target_path.rstrip("/").rstrip("\\") + "/"
+    filename = source_file.replace("\\", "/").split("/")[-1]
+    return f"{target_path}{filename}"
+
+
 # General file operations
 def file_exists(filepath):
     filepath = cleanup_filepath(filepath)
@@ -341,6 +352,8 @@ def copy_adl_file(adl_source_file, adl_target_file):
 
 
 def copy_file(source_file, target_file):
+    """Copy a file, appending the source filename if destination ends in '/'."""
+    target_file = _get_target_file_path(target_file, source_file)
     if is_s3([source_file, target_file]):
         copy_s3_file(source_file, target_file)
     elif is_adl([source_file, target_file]):
@@ -397,11 +410,12 @@ def delete_local_file(filepath, ignore_missing=True):
 @_logs.logged(desc_detail="{local_path}->{remote_path}")
 def upload_file(local_path, remote_path):
     """
-    Upload a local file to a remote path.
+    Upload a file, appending the source filename if destination ends in '/'.
 
     If the remote_path is also local, a copy operation will be performed instead.
     If you are not sure if the source file is local, use `copy_file` instead.
     """
+    remote_path = _get_target_file_path(remote_path, local_path)
     if not is_local(local_path):
         _LOGGER.warning(f"Attempting to upload a non-local file '${local_path}'.")
     elif not file_exists(local_path):
@@ -417,6 +431,7 @@ def upload_file(local_path, remote_path):
 
 
 def upload_adl_file(local_path, adl_filepath):
+    adl_filepath = _get_target_file_path(adl_filepath, local_path)
     store_name, filepath = parse_adl_path(adl_filepath)
     adl = _adls.core.AzureDLFileSystem(_adls_creds, store_name=store_name)
     _adls.multithread.ADLUploader(
@@ -431,6 +446,8 @@ def upload_adl_file(local_path, adl_filepath):
 
 
 def upload_s3_file(local_path, s3_filepath):
+    """Upload a file, appending the source filename if destination ends in '/'."""
+    s3_filepath = _get_target_file_path(s3_filepath, local_path)
     s3 = _boto3.client("s3")
     bucket_name, object_key = parse_s3_path(s3_filepath)
     s3.upload_file(local_path, bucket_name, object_key)  # SAFE
