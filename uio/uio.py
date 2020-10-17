@@ -408,7 +408,7 @@ def delete_local_file(filepath, ignore_missing=True):
 
 
 @_logs.logged(desc_detail="{local_path}->{remote_path}")
-def upload_file(local_path, remote_path):
+def upload_file(local_path: str, remote_path: str) -> str:
     """
     Upload a file, appending the source filename if destination ends in '/'.
 
@@ -427,10 +427,10 @@ def upload_file(local_path, remote_path):
         adl_fn=upload_adl_file,
         else_fn=_shutil.copyfile,
     )
-    return fn(local_path, remote_path)
+    return str(fn(local_path, remote_path))
 
 
-def upload_adl_file(local_path, adl_filepath):
+def upload_adl_file(local_path: str, adl_filepath: str):
     adl_filepath = _get_target_file_path(adl_filepath, local_path)
     store_name, filepath = parse_adl_path(adl_filepath)
     adl = _adls.core.AzureDLFileSystem(_adls_creds, store_name=store_name)
@@ -443,17 +443,19 @@ def upload_adl_file(local_path, adl_filepath):
         buffersize=4194304,
         blocksize=4194304,
     )
+    return adl_filepath
 
 
-def upload_s3_file(local_path, s3_filepath):
+def upload_s3_file(local_path: str, s3_filepath: str):
     """Upload a file, appending the source filename if destination ends in '/'."""
     s3_filepath = _get_target_file_path(s3_filepath, local_path)
     s3 = _boto3.client("s3")
     bucket_name, object_key = parse_s3_path(s3_filepath)
     s3.upload_file(local_path, bucket_name, object_key)  # SAFE
+    return s3_filepath
 
 
-def create_s3_text_file(s3_filepath, contents):
+def create_s3_text_file(s3_filepath: str, contents):
     s3 = _boto3.client("s3")
     path_parts = s3_filepath.replace("s3://", "").split("/")
     bucket_name, file_key = path_parts[0], "/".join(path_parts[1:])
