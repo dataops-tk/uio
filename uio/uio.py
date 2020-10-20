@@ -319,7 +319,7 @@ ls = list_files
 dir = list_files
 
 
-@_logs.logged("listing S3 files from '{s3_prefix}'")
+@_logs.logged("listing S3 files from '{s3_prefix}'", log_fn=_LOGGER.debug)
 def list_s3_files(s3_prefix):
     boto = _boto3.resource("s3")
     bucket_name, folder_key = parse_s3_path(s3_prefix)
@@ -407,7 +407,7 @@ def delete_local_file(filepath, ignore_missing=True):
 # File writes and uploads
 
 
-@_logs.logged(desc_detail="{local_path}->{remote_path}")
+@_logs.logged("uploading file from '{local_path}' to '{remote_path}", success_msg=None)
 def upload_file(local_path: str, remote_path: str) -> str:
     """
     Upload a file, appending the source filename if destination ends in '/'.
@@ -523,7 +523,7 @@ def download_file(remote_path, local_path):
     return fn(remote_path, local_path)
 
 
-@_logs.logged(desc_detail="{s3_path}->{local_path}")
+@_logs.logged("downloading S3 file from '{s3_path}' to '{local_path}", success_msg=None)
 def download_s3_file(s3_path, local_path):
     """Downloads an S3 file"""
     create_folder(_os.path.dirname(local_path))
@@ -534,7 +534,6 @@ def download_s3_file(s3_path, local_path):
 
 
 # Folder downloads:
-@_logs.logged(desc_detail="{remote_folder}->{local_folder}")
 def download_folder(remote_folder, local_folder, as_subfolder=False):
     """ Expects that destination folder does not exist or is empty """
     if as_subfolder:
@@ -550,7 +549,9 @@ def download_folder(remote_folder, local_folder, as_subfolder=False):
     return fn(remote_folder, local_folder)
 
 
-@_logs.logged(desc_detail="{remote_folder}->{local_folder}")
+@_logs.logged(
+    "copying folder from '{remote_folder}' to '{local_path}", success_msg=None
+)
 def _download_folder(remote_folder, local_folder):
     for remote_filepath in list_files(remote_folder):
         sub_path = remote_filepath.split(remote_folder)[1]
@@ -565,7 +566,9 @@ def _download_folder(remote_folder, local_folder):
 copy_folder = download_folder
 
 
-@_logs.logged(desc_detail="{s3_prefix}->{local_folder}")
+@_logs.logged(
+    "downloading S3 folder from '{s3_prefix}' to '{local_folder}", success_msg=None
+)
 def download_s3_folder(s3_prefix, local_folder):
     for s3_file in list_s3_files(s3_prefix):
         target_file = _os.path.join(local_folder, _os.path.basename(s3_file))
@@ -573,6 +576,7 @@ def download_s3_folder(s3_prefix, local_folder):
     return local_folder
 
 
+@_logs.logged("downloading git repo from '{repo_url}' to '{target_dir}")
 def download_git_repo(repo_url, git_ref, target_dir):
     _jobs.run(f"git clone https://{repo_url} .", cwd=target_dir)
     if git_ref != "master":
