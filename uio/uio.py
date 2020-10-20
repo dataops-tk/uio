@@ -405,9 +405,6 @@ def delete_local_file(filepath, ignore_missing=True):
 
 
 # File writes and uploads
-
-
-@_logs.logged("uploading file from '{local_path}' to '{remote_path}", success_msg=None)
 def upload_file(local_path: str, remote_path: str) -> str:
     """
     Upload a file, appending the source filename if destination ends in '/'.
@@ -430,6 +427,7 @@ def upload_file(local_path: str, remote_path: str) -> str:
     return str(fn(local_path, remote_path))
 
 
+@_logs.logged("uploading file from '{local_path}' to '{adl_filepath}", success_msg=None)
 def upload_adl_file(local_path: str, adl_filepath: str):
     adl_filepath = _get_target_file_path(adl_filepath, local_path)
     store_name, filepath = parse_adl_path(adl_filepath)
@@ -446,6 +444,7 @@ def upload_adl_file(local_path: str, adl_filepath: str):
     return adl_filepath
 
 
+@_logs.logged("uploading file from '{local_path}' to '{s3_filepath}", success_msg=None)
 def upload_s3_file(local_path: str, s3_filepath: str):
     """Upload a file, appending the source filename if destination ends in '/'."""
     s3_filepath = _get_target_file_path(s3_filepath, local_path)
