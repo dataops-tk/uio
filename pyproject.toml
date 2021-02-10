@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "uio"
-version = "0.2.2"
+version = "0.2.3"
 description = "Universal IO (uio) library."
 authors = ["AJ Steers <aj.steers@slalom.com>"]
 license = "MIT"
@@ -11,14 +11,21 @@ fire = "^0.4.0"
 logless = "^0.2.2"
 runnow = "^0.1.0"
 
-[tool.poetry.dev-dependencies]
-
-[tool.poetry.scripts]
-uio = "uio.uio:main"
+# A list of all of the optional dependencies, some of which are included in the
+# below `extras`. They can be opted into by apps.
+azure-storage-blob          = { optional = true, version = "^12.7.1" }
+azure-storage-file-datalake = { optional = true, version = "^12.2.3" }
+boto3                       = { optional = true, version = "^1.17.5" }
+s3fs                        = { optional = true, version = "<0.5.2" }
 
 [tool.poetry.extras]
 AWS = ["boto3", "s3fs"]
 Azure = ["azure-storage-blob", "azure-storage-file-datalake"]
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+uio = "uio.uio:main"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
