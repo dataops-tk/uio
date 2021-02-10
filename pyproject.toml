@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "uio"
+version = "0.2.1"
+description = "Universal IO (uio) library."
+authors = ["AJ Steers <aj.steers@slalom.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+fire = "^0.4.0"
+logless = "^0.2.2"
+runnow = "^0.1.0"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+uio = "uio.uio:main"
+
+[tool.poetry.extras]
+AWS = ["boto3", "s3fs"]
+Azure = ["azure-storage-blob", "azure-storage-file-datalake"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
