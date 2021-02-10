@@ -27,11 +27,6 @@ jobs:
     steps:
       - name: Clone git repo
         uses: actions/checkout@v1
-      - name: "Print Version Info (build number ${{ github.run_number }})"
-        run: |
-          echo "Build Number: $GITHUB_RUN_NUMBER"
-          echo "Version:      $(cat VERSION).$GITHUB_RUN_NUMBER"
-          echo "Run ID:       ${{ github.run_id }}"
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
@@ -92,7 +87,7 @@ jobs:
         run: |
           pwd
           ls -la
-          export VER=$(cat VERSION)
+          export VER=$(poetry version --short)
           export PIPERR=$(pip install $PYPACKAGE_NAME==$VER 2>&1)
           echo "Checking for PyPi availability of version $VER"
           if [[ $PIPERR == *"$VER"* ]]; then { echo "Yes"; } else { echo "Not yet found..."; sleep 30; } fi;
