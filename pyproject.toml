@@ -19,8 +19,8 @@ boto3                       = { optional = true, version = "^1.17.5" }
 s3fs                        = { optional = true, version = "<0.5.2" }
 
 [tool.poetry.extras]
-AWS = ["boto3", "s3fs"]
-Azure = ["azure-storage-blob", "azure-storage-file-datalake"]
+aws = ["boto3", "s3fs"]
+azure = ["azure-storage-blob", "azure-storage-file-datalake"]
 
 [tool.poetry.dev-dependencies]
 
